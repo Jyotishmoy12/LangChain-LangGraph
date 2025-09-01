@@ -10,12 +10,15 @@ export const llm = new ChatGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
-const input1 = [
-  {
-    role: "user",
-    content: "Hello I am Jyotishmoy",
-  },
-];
+const input1 = {
+  messages: [
+   {
+      role: "user",
+      content: "Hi im Jyotishmoy",
+    },
+  ],
+  language: "Spanish",
+};
 const input2 = [
   {
     role: "user",
@@ -27,7 +30,7 @@ const config = {
     thread_id: uuidv4(),
   },
 };
-const output1 = await app.invoke({ messages: input1 }, config);
+const output1 = await app.invoke(input1 , config);
 
 const output2 = await app.invoke({ messages: input2 }, config);
 
