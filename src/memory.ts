@@ -1,14 +1,20 @@
-import { START, END, MessagesAnnotation, StateGraph, MemorySaver } from "@langchain/langgraph";
+import { START, END, MessagesAnnotation, StateGraph, MemorySaver, Annotation } from "@langchain/langgraph";
 import { llm } from "../langChain.js";
-import { promptTemplate } from "./prompts/ChatPrompt.js";
+import { promptTemplate2 } from "./prompts/ChatPrompt.js";
+
+
+const GraphAnnotation = Annotation.Root({
+    ...MessagesAnnotation.spec,
+    language: Annotation<String>()
+    })
 
 // define function that calls the model
-export const callModel = async (state: typeof MessagesAnnotation.State) => {
-  const prompt = await promptTemplate.invoke(state)
+export const callModel = async (state: typeof GraphAnnotation.State) => {
+  const prompt = await promptTemplate2.invoke(state)
   const response = await llm.invoke(prompt);
   return { messages: response };
 };
-export const workflow = new StateGraph(MessagesAnnotation)
+export const workflow = new StateGraph(GraphAnnotation)
   .addNode("model", callModel)
   .addEdge(START, "model")
   .addEdge("model", END);
