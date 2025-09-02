@@ -1,6 +1,7 @@
 import { START, END, MessagesAnnotation, StateGraph, MemorySaver, Annotation } from "@langchain/langgraph";
 import { llm } from "../langChain.js";
 import { promptTemplate2 } from "./prompts/ChatPrompt.js";
+import { trimmer } from "./trimMessages.js";
 
 
 const GraphAnnotation = Annotation.Root({
@@ -10,7 +11,11 @@ const GraphAnnotation = Annotation.Root({
 
 // define function that calls the model
 export const callModel = async (state: typeof GraphAnnotation.State) => {
-  const prompt = await promptTemplate2.invoke(state)
+  const trimMessages = await trimmer.invoke(state.messages)
+  const prompt = await promptTemplate2.invoke({
+    messages: trimMessages,
+    language: state.language
+  })
   const response = await llm.invoke(prompt);
   return { messages: response };
 };
